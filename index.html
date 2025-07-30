@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<title>Quantum 1</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+    height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    background:radial-gradient(ellipse at top,#0f0c29 0%,#302b63 70%,#24243e 100%);
+    color:#fff;overflow:hidden
+}
+.math-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.math-symbol{
+    position:absolute;font-size:3rem;opacity:.25;
+    animation:floatSymbol 25s linear infinite;color:#0ff
+}
+@keyframes floatSymbol{
+    0%{transform:translateY(110vh) rotate(0deg) scale(.8)}
+    100%{transform:translateY(-10vh) rotate(360deg) scale(1.2)}
+}
+.card{
+    --border-radius:28px;
+    position:relative;width:380px;padding:40px 32px;
+    border-radius:var(--border-radius);
+    background:rgba(255 255 255/.08);backdrop-filter:blur(20px);
+    box-shadow:0 12px 40px rgba(0 0 0/.35);text-align:center;z-index:1
+}
+.card::before{
+    content:'';position:absolute;inset:0;border-radius:var(--border-radius);
+    padding:1px;background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);
+    -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+    -webkit-mask-composite:subtract;mask-composite:exclude
+}
+input,button{
+    width:100%;margin:8px 0;padding:18px 20px;border:none;
+    border-radius:16px;font-size:17px;color:#fff;
+    background:rgba(255 255 255/.12);backdrop-filter:blur(8px);
+    transition:.25s;outline:none
+}
+button{cursor:pointer}
+button:hover{background:rgba(255 255 255/.25);box-shadow:0 0 20px rgba(79 172 254 /.4)}
+.mic-btn{
+    width:56px;height:56px;border-radius:50%;
+    background:linear-gradient(135deg,#ff4f8e 0%,#ff006e 100%);
+    box-shadow:0 0 20px rgba(255 0 110 /.4);font-size:24px;margin-top:12px
+}
+#result{
+    margin-top:22px;font-size:24px;font-weight:600;
+    background:linear-gradient(90deg,#4facfe 0%,#00f2fe 100%);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent
+}
+</style>
+</head>
+<body>
+
+<div class="math-bg" id="mathBg"></div>
+<div class="card">
+    <h1 style="font-weight:700;font-size:32px;margin-bottom:20px">Quantum 1</h1>
+    <input id="input" placeholder="Contoh: harga 50000 diskon 20 persen" />
+    <button onclick="calculate()">Hitung 🔮</button>
+    <button class="mic-btn" onclick="startVoiceInput()" title="Voice input">🎤</button>
+    <div id="result">Siap menghitung...</div>
+</div>
+
+<script>
+/* partikel simbol */
+const symbols=['π','∞','√','∑','∫','Δ','±','∂','∏','∇'];
+const mathBg=document.getElementById('mathBg');
+function createSymbol(){
+    const el=document.createElement('span');
+    el.className='math-symbol';
+    el.textContent=symbols[Math.floor(Math.random()*symbols.length)];
+    el.style.left=Math.random()*100+'vw';
+    el.style.animationDuration=(20+Math.random()*15)+'s';
+    el.style.animationDelay=Math.random()*5+'s';
+    mathBg.appendChild(el);
+    setTimeout(()=>el.remove(),parseFloat(el.style.animationDuration)*2000);
+}
+for(let i=0;i<35;i++) createSymbol();
+setInterval(createSymbol,1200);
+
+/* ---------- SANITIZE + DISKON ---------- */
+function sanitize(raw){
+    let clean=raw.toLowerCase()
+        /* angka & desimal */
+        .replace(/koma/g,'.')
+        /* bilangan per kata */
+        .replace(/satu/g,'1').replace(/dua/g,'2').replace(/tiga/g,'3')
+        .replace(/empat/g,'4').replace(/lima/g,'5').replace(/enam/g,'6')
+        .replace(/tujuh/g,'7').replace(/delapan/g,'8').replace(/sembilan/g,'9')
+        .replace(/nol|kosong/g,'0')
+        /* seribu, juta */
+        .replace(/seribu/g,'1000').replace(/sejuta/g,'1000000')
+        /* ratus / puluh */
+        .replace(/ratus/g,'00').replace(/puluh/g,'0')
+        /* pangkat & akar */
+        .replace(/pangkat (\d+)/g,'**$1').replace(/kuadrat/g,'**2')
+        .replace(/akar(?:\s+(?:kuadrat|pangkat dua))? dari (\d+(?:\.\d+)?)/g,'Math.sqrt($1)')
+        .replace(/akar\s+(\d+(?:\.\d+)?)/g,'Math.sqrt($1)')
+        .replace(/sqrt\s+(\d+(?:\.\d+)?)/g,'Math.sqrt($1)')
+        .replace(/√\s*(\d+(?:\.\d+)?)/g,'Math.sqrt($1)')
+        .replace(/akar pangkat (\d+) dari (\d+(?:\.\d+)?)/g,'($2)**(1/$1)')
+        /* DISKON: harga X diskon Y persen */
+        .replace(/(\d+(?:\.\d+)?)\s*diskon\s*(\d+(?:\.\d+)?)\s*persen/g,'($1*(1-$2/100))')
+        /* DISKON: harga X diskon Y% */
+        .replace(/(\d+(?:\.\d+)?)\s*diskon\s*(\d+(?:\.\d+)?)%/g,'($1*(1-$2/100))')
+        /* persen biasa */
+        .replace(/(\d+(?:\.\d+)?)\s*persen/g,'($1/100)')
+        /* operator */
+        .replace(/ditambah|tambah/g,'+').replace(/dikurangi|kurang/g,'-')
+        .replace(/dikali|kali/g,'*').replace(/dibagi|bagi|div/g,'/')
+        /* kata sisa */
+        .replace(/berapa|dari|sama dengan|adalah|hasil|harga/g,'')
+        /* filter karakter */
+        .replace(/[^0-9+\-*/(). Math.sqrt]/g,'')
+        .trim();
+    return clean;
+}
+
+/* ---------- HITUNG ---------- */
+function calculate(input=null){
+    const query=input||document.getElementById('input').value;
+    if(!query) return;
+    if(query.trim()==='42'){
+        document.getElementById('result').innerHTML='🌌 Jawaban dari segalanya: 42';
+        return;
+    }
+    const expr=sanitize(query);
+    try{
+        const res=Function('"use strict";return('+expr+')')();
+        document.getElementById('result').innerHTML='💡 Hasil: '+res.toLocaleString('id-ID');
+    }catch(e){
+        document.getElementById('result').innerHTML='❌ Ekspresi tidak bisa dihitung';
+    }
+}
+
+/* ---------- VOICE INPUT ---------- */
+function startVoiceInput(){
+    if(!('webkitSpeechRecognition' in window)){
+        alert('Gunakan Chrome Desktop & HTTPS untuk voice input.');
+        return;
+    }
+    const rec=new webkitSpeechRecognition();
+    rec.lang='id-ID';rec.interimResults=false;rec.maxAlternatives=1;
+    rec.onstart=()=>document.getElementById('result').innerHTML='🎤 Mendengarkan...';
+    rec.onresult=(e)=>{
+        const txt=e.results[0][0].transcript;
+        document.getElementById('input').value=txt;
+        calculate(txt);
+    };
+    rec.onerror=(e)=>{
+        console.error(e.error);
+        document.getElementById('result').innerHTML='❌ Coba lagi / periksa mic.';
+    };
+    rec.start();
+}
+</script>
+</body>
+</html>
