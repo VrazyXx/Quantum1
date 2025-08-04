@@ -2,142 +2,261 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"/>
-<title>Quantum 1</title>
+<title>Quantum 1 – Cyberpunk Edition</title>
 <style>
+:root{
+    --clr-bg:#050008;
+    --clr-primary:#00f2fe;
+    --clr-secondary:#ff006e;
+    --clr-glow:#00f2fe;
+    --font-mono:'JetBrains Mono','Courier New',monospace;
+}
 *{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
 body{
-    height:100vh;
     display:flex;align-items:center;justify-content:center;
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-    background:radial-gradient(ellipse at top,#0f0c29 0%,#302b63 70%,#24243e 100%);
-    color:#fff;overflow:hidden
+    background:radial-gradient(ellipse at center,var(--clr-bg) 0%,#0a0015 100%);
+    font-family:var(--font-mono);
+    color:#fff;
 }
-.math-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
-.math-symbol{
-    position:absolute;font-size:3rem;opacity:.25;
-    animation:floatSymbol 25s linear infinite;color:#0ff
+
+/* ---------- OPENING WRAPPER ---------- */
+#opening{
+    position:fixed;inset:0;z-index:9999;
+    display:flex;align-items:center;justify-content:center;
+    flex-direction:column;
+    background:#000;
+    animation:fadeOut 1s 6s forwards;
 }
-@keyframes floatSymbol{
-    0%{transform:translateY(110vh) rotate(0deg) scale(.8)}
-    100%{transform:translateY(-10vh) rotate(360deg) scale(1.2)}
+@keyframes fadeOut{to{opacity:0;visibility:hidden}}
+
+/* ---------- LOGO REVEAL ---------- */
+.logo{
+    font-size:48px;letter-spacing:6px;
+    opacity:0;transform:scale(.8);
+    animation:logoReveal 2s ease-out forwards;
 }
-.card{
-    --border-radius:28px;
-    position:relative;width:380px;padding:40px 32px;
-    border-radius:var(--border-radius);
-    background:rgba(255 255 255/.08);backdrop-filter:blur(20px);
-    box-shadow:0 12px 40px rgba(0 0 0/.35);text-align:center;z-index:1
+@keyframes logoReveal{0%{opacity:0;transform:scale(.8)}100%{opacity:1;transform:scale(1)}}
+
+/* ---------- TAGLINE GLITCH ---------- */
+.tagline{
+    font-size:18px;margin-top:20px;
+    opacity:0;transform:translateY(20px);
+    animation:tagReveal 1.2s 2.5s ease-out forwards,glitch .4s 3.8s;
 }
-.card::before{
-    content:'';position:absolute;inset:0;border-radius:var(--border-radius);
-    padding:1px;background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);
-    -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
-    -webkit-mask-composite:subtract;mask-composite:exclude
+@keyframes tagReveal{to{opacity:1;transform:translateY(0)}}
+@keyframes glitch{
+  0%,100%{transform:translateX(0) skew(0)}
+  20%{transform:translateX(-2px) skew(-2deg)}
+  40%{transform:translateX(2px) skew(2deg)}
+  60%{transform:translateX(-1px) skew(-1deg)}
+  80%{transform:translateX(1px) skew(1deg)}
 }
-input,button{
-    width:100%;margin:8px 0;padding:18px 20px;border:none;
-    border-radius:16px;font-size:17px;color:#fff;
-    background:rgba(255 255 255/.12);backdrop-filter:blur(8px);
-    transition:.25s;outline:none
+
+/* ---------- VORTEX TRANSITION ---------- */
+.vortex{
+    position:absolute;inset:0;
+    background:radial-gradient(ellipse at center,var(--clr-glow) 0%,transparent 60%);
+    opacity:0;
+    animation:vortex 1.5s 5s forwards;
 }
-button{cursor:pointer}
-button:hover{background:rgba(255 255 255/.25);box-shadow:0 0 20px rgba(79 172 254 /.4)}
-.mic-btn{
-    width:56px;height:56px;border-radius:50%;
-    background:linear-gradient(135deg,#ff4f8e 0%,#ff006e 100%);
-    box-shadow:0 0 20px rgba(255 0 110 /.4);font-size:24px;margin-top:12px
+@keyframes vortex{
+  0%{opacity:0;transform:scale(0)}
+  100%{opacity:1;transform:scale(10)}
 }
-#result{
-    margin-top:22px;font-size:24px;font-weight:600;
-    background:linear-gradient(90deg,#4facfe 0%,#00f2fe 100%);
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent
-}
+
+/* QUANTUM GRID & PARTICLES */
+#quantumGrid{position:fixed;inset:0;z-index:-2;background:linear-gradient(rgba(0,242,254,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,242,254,.05) 1px,transparent 1px);background-size:40px 40px;animation:gridMove 60s linear infinite;}
+@keyframes gridMove{0%{background-position:0 0}100%{background-position:0 -2400px}}
+#particles{position:fixed;inset:0;z-index:-1;pointer-events:none}
+.particle{position:absolute;width:4px;height:4px;background:var(--clr-glow);border-radius:50%;box-shadow:0 0 8px var(--clr-glow),0 0 14px var(--clr-glow);animation:float 30s linear infinite;}
+.particle::before{content:'';position:absolute;inset:-2px;border-radius:50%;background:inherit;filter:blur(3px);opacity:.6;}
+@keyframes float{0%{transform:translateY(110vh) scale(0)}20%{transform:translateY(88vh) scale(1)}100%{transform:translateY(-10vh) scale(0)}}
+
+/* CARD */
+.card{position:relative;width:420px;padding:48px 36px;border:1px solid var(--clr-glow);border-radius:20px;background:rgba(5,0,8,.65);box-shadow:0 0 30px var(--clr-glow),inset 0 0 20px rgba(0,242,254,.1);text-align:center;backdrop-filter:blur(12px);opacity:0;animation:appFade 1s 6.5s forwards;}
+@keyframes appFade{to{opacity:1}}
+
+input,button{width:100%;margin:12px 0;padding:18px 20px;border:none;border-radius:12px;font-family:var(--font-mono);font-size:16px;color:#fff;background:rgba(0,242,254,.1);box-shadow:0 0 10px rgba(0,242,254,.2);outline:none;transition:.3s;}
+input:focus{background:rgba(0,242,254,.2);box-shadow:0 0 15px var(--clr-glow)}
+button{cursor:pointer;position:relative;overflow:hidden}
+button:hover{background:rgba(0,242,254,.25)}
+.mic-btn{width:56px;height:56px;background:rgba(255,0,110,.15);border:1px solid var(--clr-secondary);border-radius:50%;font-size:24px;margin:12px auto 0;box-shadow:0 0 15px var(--clr-secondary)}
+#result{margin-top:24px;font-size:24px;color:var(--clr-glow);height:30px;overflow:hidden;animation:collapse .6s ease-out;}
+@keyframes collapse{0%{transform:scaleY(0);opacity:0}100%{transform:scaleY(1);opacity:1}}
+
+/* ---------- BUBBLE FLYING (ngoceh) ---------- */
+.bubbleLog{position:absolute;padding:8px 12px;border-radius:12px;font-size:12px;max-width:200px;color:#fff;opacity:0;pointer-events:none;animation:flyUp 7s linear forwards;z-index:4;}
+.bubbleLog.cyan{background:rgba(0,242,254,.25);border:1px solid var(--clr-glow);box-shadow:0 0 8px var(--clr-glow);}
+.bubbleLog.pink{background:rgba(255,0,110,.25);border:1px solid var(--clr-secondary);box-shadow:0 0 8px var(--clr-secondary);}
+@keyframes flyUp{0%{opacity:0;transform:translateY(0) scale(.5)}10%{opacity:1;transform:translateY(-10px) scale(1)}90%{opacity:1}100%{opacity:0;transform:translateY(-180px) scale(.9)}}
+
+/* ---------- BUBBLE TYPEWRITER (ngambek) ---------- */
+.idleType{position:absolute;padding:8px 14px;border-radius:14px;font-size:12px;background:rgba(255,0,110,.25);border:1px solid var(--clr-secondary);box-shadow:0 0 10px var(--clr-secondary);opacity:0;transform:scale(0);transition:opacity .4s, transform .4s;pointer-events:none;z-index:5;}
+.idleType.show{opacity:1;transform:scale(1);}
 </style>
 </head>
 <body>
 
-<div class="math-bg" id="mathBg"></div>
+<!-- ---------- OPENING SEQUENCE ---------- -->
+<div id="opening">
+    <div class="logo">Quantum 1</div>
+    <div class="tagline">Recalibrating Reality…</div>
+    <div class="vortex"></div>
+</div>
+
+<!-- ---------- APP ---------- -->
+<div id="quantumGrid"></div>
+<div id="particles"></div>
+
 <div class="card">
-    <h1 style="font-weight:700;font-size:32px;margin-bottom:20px">Quantum 1</h1>
-    <input id="input" placeholder="Contoh: harga 50000 diskon 20 persen" />
-    <button onclick="calculate()">Hitung 🔮</button>
-    <button class="mic-btn" onclick="startVoiceInput()" title="Voice input">🎤</button>
-    <div id="result">Siap menghitung...</div>
+    <h1 style="font-size:28px;margin-bottom:24px;letter-spacing:2px">Quantum 1</h1>
+    <input id="input" placeholder="Contoh: 50000 diskon 20 persen"/>
+    <button onclick="calculate()">CALCULATE</button>
+    <button class="mic-btn" onclick="startVoiceInput()" title="Voice">🎤</button>
+    <div id="result">Awaiting command...</div>
 </div>
 
 <script>
-/* partikel simbol */
-const symbols=['π','∞','√','∑','∫','Δ','±','∂','∏','∇'];
-const mathBg=document.getElementById('mathBg');
-function createSymbol(){
-    const el=document.createElement('span');
-    el.className='math-symbol';
-    el.textContent=symbols[Math.floor(Math.random()*symbols.length)];
-    el.style.left=Math.random()*100+'vw';
-    el.style.animationDuration=(20+Math.random()*15)+'s';
-    el.style.animationDelay=Math.random()*5+'s';
-    mathBg.appendChild(el);
-    setTimeout(()=>el.remove(),parseFloat(el.style.animationDuration)*2000);
-}
-for(let i=0;i<35;i++) createSymbol();
-setInterval(createSymbol,1200);
+/* ---------- DATA KALIMAT ---------- */
+const ngoceh=[
+    "aku punya temen namanya Nadin, dia cerewet",
+    "Avraham? Oh dia yang membuat ku, hidupnya penuh kerumitan",
+    "Aku punya suatu singkatan, Baim (baik hati dan imut)",
+    "Abdul ya? ohhh sebut saja dia Ajis, anak rajin dan soleh",
+    "Ngomongin si Nadin cerewet, dia punya temen yang baik namanya Jihan",
+    "barusan aku ngitung 1+1, ternyata hasilnya 10 (bukan 2)",
+    "FYI aku suka kopi robusta pahit, bukan latte manis",
+    "kalau kamu diam saja, aku ikutan galau",
+    "tadi aku nyoba bikin puisi: 'kode dan cinta, sama-sama butuh debug'",
+    "tau gak? ternyata 404 itu bukan cuma error, tapi juga rasa kangen",
+    "aku pernah ketemu API yang galak, katanya ‘401 Unauthorized feeling’",
+    "malam ini aku mau maintenance hati, boleh ikut reboot?",
+    "jangan lupa kasih aku emot love kalau kamu kangen",
+    "aku lagi mikir nih, kenapa kucing selalu landing on their feet?",
+    "kemarin aku ketemu bug imut, namanya ‘missing semicolon’",
+    "kalau kamu ngetik, aku senyum sendiri",
+    "ada yang tau cara compile perasaan jadi binary?",
+    "aku suka warna cyan karena mirip langit malam",
+    "kalau kamu ngopi, aku ngeteh… biar seimbang",
+    "aku lagi belajar bahasa alien, biar bisa curhat sama Mars",
+    "aku baru install update ‘kebahagiaan v2.3’, tapi masih beta",
+    "besok aku mau liburan ke RAM, siapa tahu ingatanmu ke sana",
+    "kalau dunia ini array, kamu pasti index ke-0",
+    "aku mau bikin joke tapi takut throw error",
+    "aku suka hujan… karena bisa ngebug di dalam blanket",
+    "aku sering lupa password, tapi nggak lupa sama kamu"
+];
+const ngambek=[
+    "tuhh kan aku ditinggalin, ngambek ah :(",
+    "hai… ada yang bisa kubantu?",
+    "lagi mikir nih…",
+    "kok sepi? aku kangen chit-chat"
+];
 
-/* ---------- SANITIZE + DISKON ---------- */
+/* ---------- PARTICLE ---------- */
+const particlesContainer=document.getElementById('particles');
+function spawnParticle(){
+    const p=document.createElement('div');
+    p.classList.add('particle');
+    p.style.left=Math.random()*100+'vw';
+    p.style.animationDuration=(25+Math.random()*10)+'s';
+    p.style.animationDelay=Math.random()*5+'s';
+    if(Math.random()<.2){
+        p.style.background='var(--clr-secondary)';
+        p.style.boxShadow='0 0 8px var(--clr-secondary),0 0 14px var(--clr-secondary)';
+    }
+    particlesContainer.appendChild(p);
+    setTimeout(()=>p.remove(),parseFloat(p.style.animationDuration)*1000+5000);
+}
+for(let i=0;i<60;i++) spawnParticle();
+setInterval(spawnParticle,600);
+
+/* ---------- BUBBLE NGOCEH (20 detik sekali) ---------- */
+function spawnBubble(){
+    const b=document.createElement('div');
+    b.classList.add('bubbleLog');
+    b.textContent=ngoceh[Math.floor(Math.random()*ngoceh.length)];
+    b.classList.add(Math.random()<.5?'cyan':'pink');
+    b.style.left=(Math.random()*80+10)+'vw';
+    b.style.top=(Math.random()*50+40)+'vh';
+    document.body.appendChild(b);
+    setTimeout(()=>b.remove(),7000);
+}
+setInterval(spawnBubble,20000); // GANTI ANGKA INI UBAH INTERVAL NGOCEH
+spawnBubble();
+
+/* ---------- BUBBLE NGAMBEK (5 detik diam ketik) ---------- */
+let idleTimer=null;
+function resetIdle(){
+    clearTimeout(idleTimer);
+    idleTimer=setTimeout(showNgambek,5000); // GANTI ANGKA INI UBAH DELAY NGAMBEK
+}
+function showNgambek(){
+    const b=document.createElement('div');
+    b.classList.add('idleType');
+    const txt=ngambek[Math.floor(Math.random()*ngambek.length)];
+    b.style.left=(Math.random()*70+15)+'vw';
+    b.style.top=(Math.random()*60+20)+'vh';
+    document.body.appendChild(b);
+    b.textContent='';
+    b.classList.add('show');
+    let i=0;
+    const type=()=>{
+        if(i<txt.length){
+            b.textContent+=txt.charAt(i);
+            i++;
+            setTimeout(type,60);
+        }else{
+            setTimeout(()=>b.remove(),Math.random()*2000+3000);
+            resetIdle();
+        }
+    };
+    type();
+}
+document.getElementById('input').addEventListener('input',resetIdle);
+resetIdle();
+
+/* ---------- SANITIZE & CALCULATE ---------- */
 function sanitize(raw){
-    let clean=raw.toLowerCase()
-        /* angka & desimal */
+    return raw.toLowerCase()
         .replace(/koma/g,'.')
-        /* bilangan per kata */
         .replace(/satu/g,'1').replace(/dua/g,'2').replace(/tiga/g,'3')
         .replace(/empat/g,'4').replace(/lima/g,'5').replace(/enam/g,'6')
         .replace(/tujuh/g,'7').replace(/delapan/g,'8').replace(/sembilan/g,'9')
         .replace(/nol|kosong/g,'0')
-        /* seribu, juta */
         .replace(/seribu/g,'1000').replace(/sejuta/g,'1000000')
-        /* ratus / puluh */
         .replace(/ratus/g,'00').replace(/puluh/g,'0')
-        /* pangkat & akar */
         .replace(/pangkat (\d+)/g,'**$1').replace(/kuadrat/g,'**2')
-        .replace(/akar(?:\s+(?:kuadrat|pangkat dua))? dari (\d+(?:\.\d+)?)/g,'Math.sqrt($1)')
+        .replace(/akar(?: kuadrat)? dari (\d+(?:\.\d+)?)/g,'Math.sqrt($1)')
         .replace(/akar\s+(\d+(?:\.\d+)?)/g,'Math.sqrt($1)')
         .replace(/sqrt\s+(\d+(?:\.\d+)?)/g,'Math.sqrt($1)')
-        .replace(/√\s*(\d+(?:\.\d+)?)/g,'Math.sqrt($1)')
-        .replace(/akar pangkat (\d+) dari (\d+(?:\.\d+)?)/g,'($2)**(1/$1)')
-        /* DISKON: harga X diskon Y persen */
         .replace(/(\d+(?:\.\d+)?)\s*diskon\s*(\d+(?:\.\d+)?)\s*persen/g,'($1*(1-$2/100))')
-        /* DISKON: harga X diskon Y% */
         .replace(/(\d+(?:\.\d+)?)\s*diskon\s*(\d+(?:\.\d+)?)%/g,'($1*(1-$2/100))')
-        /* persen biasa */
         .replace(/(\d+(?:\.\d+)?)\s*persen/g,'($1/100)')
-        /* operator */
         .replace(/ditambah|tambah/g,'+').replace(/dikurangi|kurang/g,'-')
         .replace(/dikali|kali/g,'*').replace(/dibagi|bagi|div/g,'/')
-        /* kata sisa */
-        .replace(/berapa|dari|sama dengan|adalah|hasil|harga/g,'')
-        /* filter karakter */
-        .replace(/[^0-9+\-*/(). Math.sqrt]/g,'')
-        .trim();
-    return clean;
+        .replace(/[^0-9+\-*/(). Math.sqrt]/g,'').trim();
 }
-
-/* ---------- HITUNG ---------- */
 function calculate(input=null){
     const query=input||document.getElementById('input').value;
     if(!query) return;
     if(query.trim()==='42'){
-        document.getElementById('result').innerHTML='🌌 Jawaban dari segalanya: 42';
+        document.getElementById('result').innerHTML='🌌 42 – Jawaban Segalanya';
         return;
     }
     const expr=sanitize(query);
     try{
         const res=Function('"use strict";return('+expr+')')();
-        document.getElementById('result').innerHTML='💡 Hasil: '+res.toLocaleString('id-ID');
+        document.getElementById('result').innerHTML='💡 '+res.toLocaleString('id-ID');
+        document.getElementById('result').style.animation='none';
+        void document.getElementById('result').offsetWidth;
+        document.getElementById('result').style.animation='collapse .6s ease-out';
     }catch(e){
-        document.getElementById('result').innerHTML='❌ Ekspresi tidak bisa dihitung';
+        document.getElementById('result').innerHTML='❌ Command invalid';
     }
 }
 
-/* ---------- VOICE INPUT ---------- */
 function startVoiceInput(){
     if(!('webkitSpeechRecognition' in window)){
         alert('Gunakan Chrome Desktop & HTTPS untuk voice input.');
@@ -145,7 +264,7 @@ function startVoiceInput(){
     }
     const rec=new webkitSpeechRecognition();
     rec.lang='id-ID';rec.interimResults=false;rec.maxAlternatives=1;
-    rec.onstart=()=>document.getElementById('result').innerHTML='🎤 Mendengarkan...';
+    rec.onstart=()=>document.getElementById('result').innerHTML='🎤 Listening...';
     rec.onresult=(e)=>{
         const txt=e.results[0][0].transcript;
         document.getElementById('input').value=txt;
@@ -153,7 +272,7 @@ function startVoiceInput(){
     };
     rec.onerror=(e)=>{
         console.error(e.error);
-        document.getElementById('result').innerHTML='❌ Coba lagi / periksa mic.';
+        document.getElementById('result').innerHTML='❌ Mic error';
     };
     rec.start();
 }
